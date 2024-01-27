@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate , login as loginUser , logout
 from django.contrib.auth.forms import UserCreationForm , AuthenticationForm
+# Create your views here.
 from app.forms import TODOForm
 from app.models import TODO
 from django.contrib.auth.decorators import login_required
