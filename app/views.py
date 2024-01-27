@@ -1,8 +1,7 @@
-from django.shortcuts import render , redirect
-from django.http import HttpResponse
-from django.contrib.auth import authenticate , login as loginUser , logout
-from django.contrib.auth.forms import UserCreationForm , AuthenticationForm
-# Create your views here.
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse  # Add this line for JsonResponse
+from django.contrib.auth import authenticate, login as loginUser, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from app.forms import TODOForm
 from app.models import TODO
 from django.contrib.auth.decorators import login_required
@@ -96,3 +95,16 @@ def change_todo(request , id  , status):
 def signout(request):
     logout(request)
     return redirect('login')
+
+def load_todo_details(request, id):
+    try:
+        todo = TODO.objects.get(pk=id)
+        todo_details = {
+            'title': todo.title,
+            'priority': todo.priority,
+            'status': todo.status,
+            # Add other fields as needed
+        }
+        return JsonResponse(todo_details)
+    except TODO.DoesNotExist:
+        return JsonResponse({'error': 'Todo not found'}, status=404)

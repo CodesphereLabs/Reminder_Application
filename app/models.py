@@ -25,7 +25,7 @@ class TODO(models.Model):
     ('9', '9️⃣'),
     ('10', '🔟'),
     ]
-    title = models.CharField(max_length=50)
+    title = models.TextField()
     status = models.CharField(max_length=2 , choices=status_choices)
     user  = models.ForeignKey(User  , on_delete= models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
