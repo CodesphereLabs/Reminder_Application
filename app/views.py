@@ -109,58 +109,26 @@ def load_todo_details(request, id):
     except TODO.DoesNotExist:
         return JsonResponse({'error': 'Todo not found'}, status=404)
 
-# def update_todo(request, id):
-#     # Retrieve the existing TODO object or return a 404 response if not found
-#     todo = get_object_or_404(TODO, id=id)
-#     is_editing = False
-#
-#     if request.method == 'POST':
-#         # Create a form instance and populate it with data from the request
-#         form = TODOForm(request.POST, instance=todo)
-#
-#         if form.is_valid():
-#             # Save the form with the updated data
-#             form.save()
-#
-#             # Redirect to the home page or any other desired page
-#             return redirect('update_todo.html')
-#         else:
-#             # Handle the case where form validation fails
-#             # You may want to render the form with validation errors
-#             return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
-#
-#     else:
-#         # If it's a GET request, render the form with the existing data
-#         form = TODOForm(instance=todo)
-#         return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
-
 def update_todo(request, id):
-    todo = get_object_or_404(TODO, id=id, user=request.user)
+    # Retrieve the existing TODO object or return a 404 response if not found
+    todo = get_object_or_404(TODO, id=id)
 
     if request.method == 'POST':
+        # Create a form instance and populate it with data from the request
         form = TODOForm(request.POST, instance=todo)
 
         if form.is_valid():
-            if 'update-button' in request.POST:
-                # Handle update logic here
-                form.save()
-                return redirect('home')
-            elif 'add-button' in request.POST:
-                # Handle add new TODO logic here
-                if request.user.is_authenticated:
-                        user = request.user
-                        print(user)
-                        form = TODOForm(request.POST)
-                        if form.is_valid():
-                            print(form.cleaned_data)
-                            todo = form.save(commit=False)
-                            todo.user = user
-                            todo.save()
-                            print(todo)
-                            return redirect("home")
-                        else:
-                            return render(request , 'index.html' , context={'form' : form})
-    else:
-        form = TODOForm(instance=todo)
+            # Save the form with the updated data
+            form.save()
 
-    return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
+            # Redirect to the home page or any other desired page
+            return redirect('update_todo.html')
+        else:
+            # Handle the case where form validation fails
+            # You may want to render the form with validation errors
+            return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
+
+    else:
+        # If it's a GET request, render the form with the existing data
+        form = TODOForm(instance=todo)
+        return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
