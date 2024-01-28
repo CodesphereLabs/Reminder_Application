@@ -2,28 +2,37 @@
 {% block content %}
 <div>
   <div class="container pt-4">
-    <div class="row p-0 mt-4">
-      <div class="col-lg-4 mx-auto shadow p-0">
+    <div class="row p-0 mt-4" style="margin-left: -50px">
+      <!-- "ADD NEW NOTES" Div on the left -->
+      <div class="col mx-auto shadow p-0">
         <div class="alert alert-info">
           <h2>ADD NEW NOTES</h2>
         </div>
         <div class="p-4">
-          <form action="/add-todo/" method="POST">
+          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">
             {% csrf_token %}
-            {{form.as_p}}
+            {{ form.as_p }}
             <hr>
-            <input type="submit" value="ADD NEW NOTE" class="btn btn-info">
+            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">
           </form>
+<!--          <form id="todo-form" action="{% if isEditing %}{% url 'update_todo' id=todo.id %}{% else %}{% url 'add_todo' %}{% endif %}" method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            {{ form.as_p }}-->
+<!--            <hr>-->
+<!--            {% if isEditing %}-->
+<!--            <input type="submit" name="update-button" value="UPDATE NOTE" class="btn btn-info">-->
+<!--            {% else %}-->
+<!--            <input type="submit" name="add-button" value="ADD NEW NOTE" class="btn btn-info">-->
+<!--            {% endif %}-->
+<!--          </form>-->
+
         </div>
       </div>
 
-
-
-      <div class="col">
+      <!-- "Notes" Div in the middle -->
+      <div class="col-md-6">
         <div class="border">
-
           {% if todos|length == 0 %}
-
           <div class="p-4">
             <br>
             <br>
@@ -33,89 +42,98 @@
             <br>
             <br>
           </div>
-
-          {%else%}
+          {% else %}
           <div>
-            <table class="table">
+            <table class="table" style="font-size: 13px;">
               <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Title</th>
-                  <th>Status</th>
-                  <th>Priority</th>
-                  <th>Action</th>
-                </tr>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Action</th>
+              </tr>
               </thead>
-
               <tbody>
-
-                {% for todo in todos %}
-                <tr class="clickable-row" data-id="{{ todo.id }}">
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{ todo.title }}</td>
-                  <td>
-                    {% if todo.status == 'C' %}
-                    ✅
-                    {% else %}
-                    🕒
-                    {% endif %}
-                  </td>
-                  <td>{{ todo.priority }}</td>
-                  <td>
-                    <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
-                    {% if todo.status == 'P' %}
-                    <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
-                    {% else %}
-                    <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
-                    {% endif %}
-                  </td>
-                </tr>
-                {%endfor%}
-
-
+              {% for todo in todos %}
+              <tr class="clickable-row" data-id="{{ todo.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ todo.title }}</td>
+                <td>
+                  {% if todo.status == 'C' %}
+                  ✅
+                  {% else %}
+                  🕒
+                  {% endif %}
+                </td>
+                <td>{{ todo.priority }}</td>
+                <td>
+                  <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
+                  {% if todo.status == 'P' %}
+                  <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
+                  {% else %}
+                  <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
               </tbody>
             </table>
           </div>
-          {%endif%}
+          {% endif %}
         </div>
       </div>
+
+      <!-- "Reminders" Div on the right -->
+      <div class="col mx-auto shadow p-0 ml-auto" style="margin-left: 200px;">
+        <div class="alert alert-success">
+          <h2>REMINDERS</h2>
+        </div>
+        <div class="p-4">
+          <p>Event :</p>
+          <p>Location :</p>
+          <p>Date :</p>
+          <p>Time :</p>
+          <!-- Add more reminders as needed -->
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!--<script>-->
-<!--  $(document).ready(function() {-->
-<!--    // Attach click event handler to table rows-->
-<!--    $(".clickable-row").click(function() {-->
-<!--      var todoId = $(this).data("id");-->
-<!--      // Redirect to a URL where you can load the details of the clicked todo-->
-<!--      window.location.href = "/load_todo_details/" + todoId + "/";-->
-<!--    });-->
-<!--  });-->
-<!--</script>-->
+<!-- JavaScript Code -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Attach click event handler to table rows
     var rows = document.querySelectorAll(".clickable-row");
+    var isEditing = false;
+
     rows.forEach(function(row) {
       row.addEventListener('click', function() {
         var todoId = row.dataset.id;
-
-        // AJAX request to fetch todo details based on ID
+        isEditing = true;  // Set the editing flag
         fetch(`/load_todo_details/${todoId}/`)
                 .then(response => response.json())
                 .then(todoDetails => {
-                  // Populate form fields with todo details
                   document.getElementById('id_title').value = todoDetails.title;
                   document.getElementById('id_priority').value = todoDetails.priority;
                   document.getElementById('id_status').value = todoDetails.status;
-                  // Add similar lines for other fields
+                  updateButtonState();  // Call a function to update button state
                 })
                 .catch(error => console.error(error));
       });
     });
+
+    // Function to update button state
+    function updateButtonState() {
+      var addButton = document.getElementById('add-button');
+      if (isEditing) {
+        addButton.value = "UPDATE NOTE";
+      } else {
+        addButton.value = "ADD NEW NOTE";
+      }
+    }
   });
 </script>
-
 
 {% endblock %}
