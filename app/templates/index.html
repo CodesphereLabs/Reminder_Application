@@ -9,23 +9,12 @@
           <h2>ADD NEW NOTES</h2>
         </div>
         <div class="p-4">
-          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">
+          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/update_todo/{% endif %}" method="POST">
             {% csrf_token %}
             {{ form.as_p }}
             <hr>
             <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">
           </form>
-<!--          <form id="todo-form" action="{% if isEditing %}{% url 'update_todo' id=todo.id %}{% else %}{% url 'add_todo' %}{% endif %}" method="POST">-->
-<!--            {% csrf_token %}-->
-<!--            {{ form.as_p }}-->
-<!--            <hr>-->
-<!--            {% if isEditing %}-->
-<!--            <input type="submit" name="update-button" value="UPDATE NOTE" class="btn btn-info">-->
-<!--            {% else %}-->
-<!--            <input type="submit" name="add-button" value="ADD NEW NOTE" class="btn btn-info">-->
-<!--            {% endif %}-->
-<!--          </form>-->
-
         </div>
       </div>
 
@@ -128,6 +117,7 @@
     function updateButtonState() {
       var addButton = document.getElementById('add-button');
       if (isEditing) {
+        console.log(isEditing)
         addButton.value = "UPDATE NOTE";
       } else {
         addButton.value = "ADD NEW NOTE";

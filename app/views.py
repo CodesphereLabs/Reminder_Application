@@ -134,7 +134,6 @@ def load_todo_details(request, id):
 #         form = TODOForm(instance=todo)
 #         return render(request, 'update_todo.html', {'form': form, 'isEditing': True, 'todo_id': id})
 
-@login_required(login_url='login')
 def update_todo(request, id):
     todo = get_object_or_404(TODO, id=id, user=request.user)
 
