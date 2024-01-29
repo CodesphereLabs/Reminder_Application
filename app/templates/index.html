@@ -9,6 +9,12 @@
           <h2>ADD NEW NOTES</h2>
         </div>
         <div class="p-4">
+<!--          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            {{ form.as_p }}-->
+<!--            <hr>-->
+<!--            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">-->
+<!--          </form>-->
           <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">
             {% csrf_token %}
             {{ form.as_p }}
@@ -100,7 +106,6 @@
     rows.forEach(function(row) {
       row.addEventListener('click', function() {
         var todoId = row.dataset.id;
-        isEditing = true;  // Set the editing flag
         fetch(`/load_todo_details/${todoId}/`)
                 .then(response => response.json())
                 .then(todoDetails => {
@@ -116,6 +121,8 @@
     // Function to update button state
     function updateButtonState() {
       var addButton = document.getElementById('add-button');
+      isEditing = true;  // Set the editing flag
+
       if (isEditing) {
         console.log(isEditing)
         addButton.value = "UPDATE NOTE";
