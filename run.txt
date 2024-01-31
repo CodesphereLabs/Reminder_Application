@@ -2,3 +2,17 @@ python manage.py migrate
 python manage.py makemigrations
 pyhton manage.py createsuperuser
 python manage.py runserver
+
+
+<!--          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            {{ form.as_p }}-->
+<!--            <hr>-->
+<!--            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">-->
+<!--          </form>-->
+<!--          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            {{ form.as_p }}-->
+<!--            <hr>-->
+<!--            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">-->
+<!--          </form>-->

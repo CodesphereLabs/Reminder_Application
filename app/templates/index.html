@@ -1,136 +1,190 @@
 {% extends 'base.html' %}
 {% block content %}
 <div>
-  <div class="container pt-4">
-    <div class="row p-0 mt-4" style="margin-left: -50px">
-      <!-- "ADD NEW NOTES" Div on the left -->
-      <div class="col mx-auto shadow p-0">
-        <div class="alert alert-info">
-          <h2>ADD NEW NOTES</h2>
-        </div>
-        <div class="p-4">
-<!--          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">-->
-<!--            {% csrf_token %}-->
-<!--            {{ form.as_p }}-->
-<!--            <hr>-->
-<!--            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">-->
-<!--          </form>-->
-          <form id="todo-form" action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}" method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <hr>
-            <input type="submit" id="add-button" value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">
-          </form>
-        </div>
-      </div>
-
-      <!-- "Notes" Div in the middle -->
-      <div class="col-md-6">
-        <div class="border">
-          {% if todos|length == 0 %}
-          <div class="p-4">
-            <br>
-            <br>
-            <div class="alert alert-info text-center">
-              <p class="" style="font-size: 30px;">NO OF NOTES</p>
+    <div class="container pt-4">
+        <div class="row p-0 mt-4" style="margin-left: -50px">
+            <!-- "ADD NEW NOTES" Div on the left -->
+            <div class="col mx-auto shadow p-0">
+                <div class="alert alert-info">
+                    <h2>ADD NEW NOTES</h2>
+                </div>
+                <div class="p-4">
+                    <form id="todo-form"
+                          action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}"
+                          method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <hr>
+                        <input type="submit" id="add-button"
+                               value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}"
+                               class="btn btn-info">
+                        <button type="button" id="update-button" style="display: none;" class="btn btn-warning">UPDATE
+                            NOTE
+                        </button>
+                    </form>
+                </div>
             </div>
-            <br>
-            <br>
-          </div>
-          {% else %}
-          <div>
-            <table class="table" style="font-size: 13px;">
-              <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Action</th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for todo in todos %}
-              <tr class="clickable-row" data-id="{{ todo.id }}">
-                <td>{{ forloop.counter }}</td>
-                <td>{{ todo.title }}</td>
-                <td>
-                  {% if todo.status == 'C' %}
-                  ✅
-                  {% else %}
-                  🕒
-                  {% endif %}
-                </td>
-                <td>{{ todo.priority }}</td>
-                <td>
-                  <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
-                  {% if todo.status == 'P' %}
-                  <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
-                  {% else %}
-                  <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
-        </div>
-      </div>
 
-      <!-- "Reminders" Div on the right -->
-      <div class="col mx-auto shadow p-0 ml-auto" style="margin-left: 200px;">
-        <div class="alert alert-success">
-          <h2>REMINDERS</h2>
-        </div>
-        <div class="p-4">
-          <p>Event :</p>
-          <p>Location :</p>
-          <p>Date :</p>
-          <p>Time :</p>
-          <!-- Add more reminders as needed -->
-        </div>
-      </div>
+            <!-- "Notes" Div in the middle -->
+            <div class="col-md-6">
+                <div class="border">
+                    {% if todos|length == 0 %}
+                    <div class="p-4">
+                        <br>
+                        <br>
+                        <div class="alert alert-info text-center">
+                            <p class="" style="font-size: 30px;">NO OF NOTES</p>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                    {% else %}
+                    <div>
+                        <table class="table" style="font-size: 13px;">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for todo in todos %}
+                            <tr class="clickable-row" data-id="{{ todo.id }}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ todo.title }}</td>
+                                <td>
+                                    {% if todo.status == 'C' %}
+                                    ✅
+                                    {% else %}
+                                    🕒
+                                    {% endif %}
+                                </td>
+                                <td>{{ todo.priority }}</td>
+                                <td>
+                                    <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
+                                    {% if todo.status == 'P' %}
+                                    <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
+                                    {% else %}
+                                    <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
 
+            <!-- "Reminders" Div on the right -->
+            <div class="col mx-auto shadow p-0 ml-auto" style="margin-left: 200px;">
+                <div class="alert alert-success">
+                    <h2>REMINDERS</h2>
+                </div>
+                <div class="p-4">
+                    <p>Event :</p>
+                    <p>Location :</p>
+                    <p>Date :</p>
+                    <p>Time :</p>
+                    <!-- Add more reminders as needed -->
+                </div>
+            </div>
+
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- JavaScript Code -->
+<!-- JavaScript Code -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var rows = document.querySelectorAll(".clickable-row");
-    var isEditing = false;
+    document.addEventListener('DOMContentLoaded', function () {
+        var rows = document.querySelectorAll(".clickable-row");
+        var isEditing = false;
+        var selectedTodoId = null;
 
-    rows.forEach(function(row) {
-      row.addEventListener('click', function() {
-        var todoId = row.dataset.id;
-        fetch(`/load_todo_details/${todoId}/`)
-                .then(response => response.json())
-                .then(todoDetails => {
-                  document.getElementById('id_title').value = todoDetails.title;
-                  document.getElementById('id_priority').value = todoDetails.priority;
-                  document.getElementById('id_status').value = todoDetails.status;
-                  updateButtonState();  // Call a function to update button state
+        rows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                var todoId = row.dataset.id;
+                selectedTodoId = todoId;
+                fetch(`/load_todo_details/${todoId}/`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(todoDetails => {
+                        document.getElementById('id_title').value = todoDetails.title;
+                        document.getElementById('id_priority').value = todoDetails.priority;
+                        document.getElementById('id_status').value = todoDetails.status;
+                        updateButtonState(true); // Pass true to indicate editing
+                    })
+                    .catch(error => console.error(error.message));
+            });
+        });
+
+        function updateButtonState(isEditing) {
+            var addButton = document.getElementById('add-button');
+            var updateButton = document.getElementById('update-button');
+
+            if (isEditing) {
+                addButton.style.display = "none";
+                updateButton.style.display = "block";
+                updateButton.addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+                    updateTodo();
+                });
+            } else {
+                addButton.style.display = "block";
+                updateButton.style.display = "none";
+                updateButton.removeEventListener('click', updateTodo); // Remove previous event listener
+            }
+        }
+
+        function updateTodo() {
+            var todoId = selectedTodoId;
+            console.log(todoId);
+            fetch(`/update_todo/${todoId}/`, {
+                method: 'POST',
+                body: new FormData(document.getElementById('todo-form')),
+                headers: {
+                    'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
+                }
+            })
+            updateTableRow(todoId);
+            console.log("Hellooooooooooooooooooeeeeeeeeee");
+        }
+
+        function updateTableRow(todoId) {
+            fetch(`/load_todo_details/${todoId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
                 })
-                .catch(error => console.error(error));
-      });
+                .then(todoDetails => {
+                    var row = document.querySelector(`.clickable-row[data-id="${todoId}"]`);
+                    row.innerHTML = `
+            <td>${row.rowIndex}</td>
+            <td>${todoDetails.title}</td>
+            <td>${todoDetails.status === 'C' ? '✅' : '🕒'}</td>
+            <td>${todoDetails.priority}</td>
+            <td>
+              <a href="/delete-todo/${todoId}" title="Delete" class="">🗑️</a>
+              ${todoDetails.status === 'P'
+                        ? `<a href="/change-status/${todoId}/C" title="Mark Completed" class="">✅</a>`
+                        : `<a href="/change-status/${todoId}/P" title="Mark Pending" class="">🕒</a>`}
+            </td>
+          `;
+                })
+                .catch(error => console.error(error.message));
+        }
     });
-
-    // Function to update button state
-    function updateButtonState() {
-      var addButton = document.getElementById('add-button');
-      isEditing = true;  // Set the editing flag
-
-      if (isEditing) {
-        console.log(isEditing)
-        addButton.value = "UPDATE NOTE";
-      } else {
-        addButton.value = "ADD NEW NOTE";
-      }
-    }
-  });
 </script>
 
 {% endblock %}
