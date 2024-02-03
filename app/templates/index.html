@@ -54,7 +54,7 @@
                             {% for todo in todos %}
                             <tr class="clickable-row" data-id="{{ todo.id }}">
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ todo.title }}</td>
+                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ todo.title }}">{{ todo.title }}</td>
                                 <td>
                                     {% if todo.status == 'C' %}
                                     ✅
@@ -70,6 +70,16 @@
                                     {% else %}
                                     <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
                                     {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="details-row" data-id="{{ todo.id }}" style="display: none;">
+                                <td colspan="5">
+                                    <!-- Add detailed information here -->
+                                    <p>Event: {{ todo.event }}</p>
+                                    <p>Location: {{ todo.location }}</p>
+                                    <p>Date: {{ todo.date }}</p>
+                                    <p>Time: {{ todo.time }}</p>
+                                    <!-- Add more details as needed -->
                                 </td>
                             </tr>
                             {% endfor %}
@@ -147,7 +157,6 @@
 
         function updateTodo() {
             var todoId = selectedTodoId;
-            console.log(todoId);
             fetch(`/update_todo/${todoId}/`, {
                 method: 'POST',
                 body: new FormData(document.getElementById('todo-form')),
@@ -155,12 +164,7 @@
                     'X-CSRFToken': document.getElementsByName('csrfmiddlewaretoken')[0].value
                 }
             })
-            updateTableRow(todoId);
-            console.log("Hellooooooooooooooooooeeeeeeeeee");
-        }
-
-        function updateTableRow(todoId) {
-            fetch(`/load_todo_details/${todoId}/`)
+            location.reload()
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -169,18 +173,27 @@
                 })
                 .then(todoDetails => {
                     var row = document.querySelector(`.clickable-row[data-id="${todoId}"]`);
+                    var detailsRow = document.querySelector(`.details-row[data-id="${todoId}"]`);
                     row.innerHTML = `
-            <td>${row.rowIndex}</td>
-            <td>${todoDetails.title}</td>
-            <td>${todoDetails.status === 'C' ? '✅' : '🕒'}</td>
-            <td>${todoDetails.priority}</td>
-            <td>
-              <a href="/delete-todo/${todoId}" title="Delete" class="">🗑️</a>
-              ${todoDetails.status === 'P'
+                    <td>${row.rowIndex}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${todoDetails.title}">${todoDetails.title}</td>
+                    <td>${todoDetails.status === 'C' ? '✅' : '🕒'}</td>
+                    <td>${todoDetails.priority}</td>
+                    <td>
+                        <a href="/delete-todo/${todoId}" title="Delete" class="">🗑️</a>
+                        ${todoDetails.status === 'P'
                         ? `<a href="/change-status/${todoId}/C" title="Mark Completed" class="">✅</a>`
                         : `<a href="/change-status/${todoId}/P" title="Mark Pending" class="">🕒</a>`}
-            </td>
-          `;
+                    </td>
+                `;
+                    detailsRow.innerHTML = `
+                    <!-- Add detailed information here -->
+                    <p>Event: ${todoDetails.event}</p>
+                    <p>Location: ${todoDetails.location}</p>
+                    <p>Date: ${todoDetails.date}</p>
+                    <p>Time: ${todoDetails.time}</p>
+                    <!-- Add more details as needed -->
+                `;
                 })
                 .catch(error => console.error(error.message));
         }
