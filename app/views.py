@@ -74,13 +74,55 @@ from app.models import TODO
 #         else:
 #             return render(request, 'index.html', context={'form': form})
 
+# @login_required(login_url='login')
+# def home(request):
+#     if request.user.is_authenticated:
+#         user = request.user
+#         form = TODOForm()
+#         todos = TODO.objects.filter(user=user).order_by('priority')
+#
+#         todo = TODO.objects.get()
+#                 todo_details = {
+#                     'title': todo.title,
+#                     'priority': todo.priority,
+#                     'status': todo.status,
+#                     'event' : todo.event,
+#                     'location' : todo.location,
+#                     'event_date' : todo.event_date,
+#                     'event_time' : todo.event_time,
+#                     # Add other fields as needed
+#                 }
+#                 print(todo_details)
+#                 return JsonResponse(todo_details)
+#
+#         return render(request, 'index.html', context={'form': form, 'todos': todos})
+
 @login_required(login_url='login')
 def home(request):
     if request.user.is_authenticated:
         user = request.user
         form = TODOForm()
         todos = TODO.objects.filter(user=user).order_by('priority')
-        return render(request, 'index.html', context={'form': form, 'todos': todos})
+
+        # Assuming you want to get the first todo for the user (you may adjust the criteria)
+        try:
+            todo = TODO.objects.filter(user=user).order_by('priority').first()
+            todo_details = {
+                'title': todo.title,
+                'priority': todo.priority,
+                'status': todo.status,
+                'event': todo.event,
+                'location': todo.location,
+                'event_date': todo.event_date,
+                'event_time': todo.event_time,
+                # Add other fields as needed
+            }
+            print(todo_details)
+        except TODO.DoesNotExist:
+            # Handle the case where no todo is found
+            return JsonResponse({'error': 'No TODO found for the user'})
+
+    return render(request, 'index.html', context={'form': form, 'todos': todos})
 
 def login(request):
     if request.method == 'GET':
@@ -155,8 +197,31 @@ def load_todo_details(request, id):
             'title': todo.title,
             'priority': todo.priority,
             'status': todo.status,
+            'event' : todo.event,
+            'location' : todo.location,
+            'event_date' : todo.event_date,
+            'event_time' : todo.event_time,
             # Add other fields as needed
         }
+        print(todo_details)
+        return JsonResponse(todo_details)
+    except TODO.DoesNotExist:
+        return JsonResponse({'error': 'Todo not found'}, status=404)
+
+def load_all_todo_details(request):
+    try:
+        todo = TODO.objects.get()
+        todo_details = {
+            'title': todo.title,
+            'priority': todo.priority,
+            'status': todo.status,
+            'event' : todo.event,
+            'location' : todo.location,
+            'event_date' : todo.event_date,
+            'event_time' : todo.event_time,
+            # Add other fields as needed
+        }
+        print(todo_details)
         return JsonResponse(todo_details)
     except TODO.DoesNotExist:
         return JsonResponse({'error': 'Todo not found'}, status=404)
