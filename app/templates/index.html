@@ -10,14 +10,13 @@
                 </div>
                 <div class="p-4" style="margin-top: -10px">
                     <form id="todo-form"
-                          action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}"
-                          method="POST">
+                        action="{% if isEditing %}/update_todo/{{ todo.id }}/{% else %}/add_todo/{% endif %}"
+                        method="POST">
                         {% csrf_token %}
                         {{ form.as_p }}
                         <hr>
                         <input type="submit" id="add-button"
-                               value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}"
-                               class="btn btn-info">
+                            value="{% if isEditing %}UPDATE NOTE{% else %}ADD NEW NOTE{% endif %}" class="btn btn-info">
                         <button type="button" id="update-button" style="display: none;" class="btn btn-warning">UPDATE
                             NOTE
                         </button>
@@ -42,37 +41,38 @@
                     <div>
                         <table class="table" style="font-size: 13px;">
                             <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Action</th>
-                            </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {% for todo in todos %}
-                            <tr class="clickable-row" data-id="{{ todo.id }}">
-                                <td>{{ forloop.counter }}</td>
-                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ todo.title }}">{{ todo.title }}</td>
-                                <td>
-                                    {% if todo.status == 'C' %}
-                                    ✅
-                                    {% else %}
-                                    🕒
-                                    {% endif %}
-                                </td>
-                                <td>{{ todo.priority }}</td>
-                                <td>
-                                    <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
-                                    {% if todo.status == 'P' %}
-                                    <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
-                                    {% else %}
-                                    <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
+                                {% for todo in todos %}
+                                <tr class="clickable-row" data-id="{{ todo.id }}">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                        title="{{ todo.title }}">{{ todo.title }}</td>
+                                    <td>
+                                        {% if todo.status == 'C' %}
+                                        ✅
+                                        {% else %}
+                                        🕒
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ todo.priority }}</td>
+                                    <td>
+                                        <a href="/delete-todo/{{ todo.id }}" title="Delete" class="">🗑️</a>
+                                        {% if todo.status == 'P' %}
+                                        <a href="/change-status/{{ todo.id }}/C" title="Mark Completed" class="">✅</a>
+                                        {% else %}
+                                        <a href="/change-status/{{ todo.id }}/P" title="Mark Pending" class="">🕒</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -80,31 +80,35 @@
                 </div>
             </div>
 
-            <!-- "Reminders" Div on the right -->
-            <div class="col mx-auto shadow p-0 ml-auto" style="margin-left: 190px; max-height: 520px; overflow-y: auto;">
+            <!-- Reminders Div on the right -->
+            <!-- Reminders Div on the right -->
+            <div class="col mx-auto shadow p-0 ml-auto"
+                style="margin-left: 190px; max-height: 520px; overflow-y: auto;">
                 <div class="col mx-auto shadow p-0 ml-auto">
                     <div class="alert alert-success">
                         <h2>REMINDERS</h2>
                     </div>
                     <div class="p-4">
-                        {% for todo in todos %}
-                        <div class="alert alert-success reminder-details" data-id="{{ todo.id }}">
-                            <h6>REMINDER {{ forloop.counter }}</h6>
-                            <p style="font-size: 12px">Event: {{ todo.event }}</p>
-                            <p style="font-size: 12px">Location: {{ todo.location }}</p>
-                            <p style="font-size: 12px">Date: {{ todo.event_date }}</p>
-                            <p style="font-size: 12px">Time: {{ todo.event_time }}</p>
+                        {% if reminders %}
+                        {% for reminder in reminders %}
+                        <div class="alert alert-success reminder-details" data-id="{{ reminder.reminder_number }}">
+                            <h6>{{ reminder.reminder_number }}</h6>
+                            <p style="font-size: 12px">Event: {{ reminder.title }}</p>
+                            <p style="font-size: 12px">Venue: {{ reminder.venue }}</p>
+                            <p style="font-size: 12px">Date: {{ reminder.date }}</p>
+                            <p style="font-size: 12px">Time: {{ reminder.time }}</p>
                         </div>
                         {% endfor %}
+                        {% else %}
+                        <p>No reminders found.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- JavaScript Code -->
 <!-- JavaScript Code -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -178,8 +182,8 @@
                     <td>
                         <a href="/delete-todo/${todoId}" title="Delete" class="">🗑️</a>
                         ${todoDetails.status === 'P'
-                        ? `<a href="/change-status/${todoId}/C" title="Mark Completed" class="">✅</a>`
-                        : `<a href="/change-status/${todoId}/P" title="Mark Pending" class="">🕒</a>`}
+                            ? `<a href="/change-status/${todoId}/C" title="Mark Completed" class="">✅</a>`
+                            : `<a href="/change-status/${todoId}/P" title="Mark Pending" class="">🕒</a>`}
                     </td>
                 `;
                     detailsRow.innerHTML = `
