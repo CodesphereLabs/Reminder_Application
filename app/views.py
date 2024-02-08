@@ -18,23 +18,24 @@ def home(request):
 
         try:
             for todo in todos:
-                events_data = todo.event.split(',')
-                for event_data in events_data:
-                    match = re.match(
-                        #r"Event\s*:\s*(.*?)\s*Venue\s*:\s*(.*?)\s*Date\s*:\s*(.*?)\s*Time\s*:\s*(\d{2}:\d{2}\s*[ap]m)\s*", event_data.strip())
-                        r"Event\s*:\s*(.*?)\s*Venue\s*:\s*(.*?)\s*Date\s*:\s*(.*?)\s*Time\s*:\s*(\d{2}.\d{2}\s*[ap]m)\s*", event_data.strip())
-                    if match:
-                        title = match.group(1).strip()
-                        venue = match.group(2).strip()
-                        date = match.group(3).strip()
-                        time = match.group(4).strip()
-                        reminders.append({
-                            'title': title,
-                            'venue': venue,
-                            'date': date,
-                            'time': time,
-                            'reminder_number': f'Reminder{len(reminders) + 1}'
-                        })
+                if todo.event:  # Check if event is not None
+                    events_data = todo.event.split(',')
+                    for event_data in events_data:
+                        match = re.match(
+                            r"Event\s*:\s*(.*?)\s*Venue\s*:\s*(.*?)\s*Date\s*:\s*(.*?)\s*Time\s*:\s*(\d{2}.\d{2}\s*[ap]m)\s*",
+                            event_data.strip())
+                        if match:
+                            title = match.group(1).strip()
+                            venue = match.group(2).strip()
+                            date = match.group(3).strip()
+                            time = match.group(4).strip()
+                            reminders.append({
+                                'title': title,
+                                'venue': venue,
+                                'date': date,
+                                'time': time,
+                                'reminder_number': f'Reminder{len(reminders) + 1}'
+                            })
 
             print(reminders)  # Print reminders (for debugging purposes)
         except TODO.DoesNotExist:
