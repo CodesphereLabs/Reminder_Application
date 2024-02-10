@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as loginUser, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from app.forms import TODOForm, CustomUserCreationForm  # Correct import
+from django.db import transaction
 from app.models import TODO
+import joblib
 import re
 
 @login_required(login_url='login')
@@ -83,15 +85,47 @@ def signup(request):
     context = {'form': form}
     return render(request, 'signup.html', context)
 
+# @login_required(login_url='login')
+# def add_todo(request):
+#     if request.user.is_authenticated:
+#         nlp_model = joblib.load("saveModels\model.joblib")
+#         user = request.user
+#         form = TODOForm(request.POST)
+#         if form.is_valid():
+#             todo = form.save(commit=False)
+#             todo.user = user
+#             todo.save()
+#             return redirect("home")
+#         else:
+#             return render(request, 'index.html', context={'form': form})
+
 @login_required(login_url='login')
 def add_todo(request):
     if request.user.is_authenticated:
         user = request.user
         form = TODOForm(request.POST)
         if form.is_valid():
+            # Get the title input from the form
+            title = form.cleaned_data['title']
+            
+            # Create an instance of the ExtractFromToDo class
+            extractor = joblib.load('saveModels\model.joblib')
+            
+            # Extract event information from the title
+            event_info_list = extractor.extract_info_from_sentence(title)
+            
+            # Extracting the first event info from the list
+            event_info = event_info_list[0] if event_info_list else {}
+            
+            # Create a string representation of the event information
+            event_string = f"Event: {event_info.get('Title', '')}, Venue: {event_info.get('Venue', '')}, Date: {event_info.get('Date', '')}, Time: {event_info.get('Time', '')}"
+            
+            # Save the event information to the 'event' field of the TODO object
             todo = form.save(commit=False)
             todo.user = user
+            todo.event = event_string
             todo.save()
+            
             return redirect("home")
         else:
             return render(request, 'index.html', context={'form': form})
@@ -119,9 +153,9 @@ def load_todo_details(request, id):
             'priority': todo.priority,
             'status': todo.status,
             'event': todo.event,
-            'location': todo.location,
-            'event_date': todo.event_date,
-            'event_time': todo.event_time,
+            # 'location': todo.location,
+            # 'event_date': todo.event_date,
+            # 'event_time': todo.event_time,
             # Add other fields as needed
         }
         print(todo_details)
@@ -137,9 +171,9 @@ def load_all_todo_details(request):
             'priority': todo.priority,
             'status': todo.status,
             'event': todo.event,
-            'location': todo.location,
-            'event_date': todo.event_date,
-            'event_time': todo.event_time,
+            # 'location': todo.location,
+            # 'event_date': todo.event_date,
+            # 'event_time': todo.event_time,
             # Add other fields as needed
         }
         print(todo_details)

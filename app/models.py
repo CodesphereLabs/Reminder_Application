@@ -27,6 +27,6 @@ class TODO(models.Model):
 
     # New Fields
     event = models.CharField(max_length=255, blank=True, null=True)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    event_date = models.DateField(blank=True, null=True)
-    event_time = models.TimeField(blank=True, null=True)
+    # location = models.CharField(max_length=255, blank=True, null=True)
+    # event_date = models.DateField(blank=True, null=True)
+    # event_time = models.TimeField(blank=True, null=True)
