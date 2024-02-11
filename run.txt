@@ -1,3 +1,4 @@
+--Backend--
 pip install virtualenv
 virtualenv venv
 pip install django
@@ -7,4 +8,11 @@ python manage.py runserver
 python manage.py migrate
 python manage.py makemigrations
 pyhton manage.py createsuperuser
+
+--ML--
+pip install notebook
+jupyter notebook
+pip install spacy
+python -m spacy download en_core_web_sm
+pip install joblib
 
