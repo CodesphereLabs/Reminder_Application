@@ -97,6 +97,8 @@ def add_todo(request):
             todo.user = user
             todo_text = todo.title
 
+            translate_data ='http://127.0.0.1:5001/translate'
+
             flask_endpoint = 'http://127.0.0.1:5001/extract-todo-info'
             
             data = {'todo_text': todo_text}
